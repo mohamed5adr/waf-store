@@ -1,8 +1,9 @@
 import { NextResponse } from "next/server";
 import fs from "fs";
+import os from "os";
 import path from "path";
 
-// POST — رفع صورة منجت إلى public/uploads
+// POST — رفع صورة إلى /tmp/uploads وتقديمها عبر /api/media (بيئات قراءة فقط آمنة)
 export async function POST(req) {
   const form = await req.formData();
   const file = form.get("file");
@@ -16,8 +17,12 @@ export async function POST(req) {
   const rawExt = (file.name?.split(".").pop() || "jpg").toLowerCase();
   const ext = /^([a-z0-9]{2,5})$/.test(rawExt) ? rawExt : "jpg";
   const filename = `${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
-  const dir = path.join(process.cwd(), "public", "uploads");
-  fs.mkdirSync(dir, { recursive: true });
-  fs.writeFileSync(path.join(dir, filename), bytes);
-  return NextResponse.json({ url: `/uploads/${filename}` });
+  const dir = path.join(os.tmpdir(), "waf-uploads");
+  try {
+    fs.mkdirSync(dir, { recursive: true });
+    fs.writeFileSync(path.join(dir, filename), bytes);
+  } catch {
+    return NextResponse.json({ error: "فشل حفظ الصورة في هذه البيئة" }, { status: 500 });
+  }
+  return NextResponse.json({ url: `/api/media/${filename}` });
 }
