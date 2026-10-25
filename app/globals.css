@@ -1,0 +1,32 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #136163;
+  --color-primary-dark: #0e4b4d;
+  --color-primary-light: #1a7d7f;
+  --color-accent-red: #f44336;
+}
+
+html,
+body {
+  direction: rtl;
+  text-align: right;
+}
+
+* {
+  font-family: var(--font-almarai), "Almarai", sans-serif;
+}
+
+/* شريط تمرير أفقي منسق للكاروسيلات */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* ظل بسيط للهيدر الثابت */
+.header-shadow {
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}

@@ -1,0 +1,84 @@
+"use client";
+
+import Link from "next/link";
+import { useState } from "react";
+import ProductCard from "@/components/ProductCard";
+import { useProducts } from "@/lib/hooks";
+import { categories, discountOf } from "@/lib/data";
+
+const sorts = [
+  { id: "default", label: "الافتراضي" },
+  { id: "discount", label: "الأعلى خصمًا" },
+  { id: "price-asc", label: "السعر: الأقل الأول" },
+  { id: "price-desc", label: "السعر: الأعلى الأول" },
+];
+
+export default function CollectionPage({ params }) {
+  const cat = categories.find((c) => c.id === params.slug);
+  const { products, error } = useProducts();
+  const [active, setActive] = useState("default");
+  const base = products && cat ? products.filter((p) => p.category === cat.id) : [];
+
+  if (!products) {
+    return (
+      <div className="text-center py-24 text-gray-400">
+        <p className="text-4xl mb-3">🛍️</p>
+        <p>بنجهز المتجر...</p>
+      </div>
+    );
+  }
+  if (error) return <p className="text-center text-accent-red py-16">مشكلة تحميل: {error}</p>;
+
+  const sortBtn = "px-3 py-1.5 rounded-full text-xs font-bold border transition-colors";
+  const list = (() => {
+    const l = [...base];
+    if (active === "discount") l.sort((a, b) => discountOf(b) - discountOf(a));
+    if (active === "price-asc") l.sort((a, b) => a.price - b.price);
+    if (active === "price-desc") l.sort((a, b) => b.price - a.price);
+    return l;
+  })();
+
+  return (
+    <div>
+      {/* مسار التنقل */}
+      <nav className="text-xs text-gray-400 mb-4 flex gap-1.5 items-center">
+        <Link href="/" className="hover:text-primary">الرئيسية</Link>
+        <span>/</span>
+        <Link href="/collections" className="hover:text-primary">الأقسام</Link>
+        <span>/</span>
+        <span className="text-gray-600">{cat?.name || "غير موجود"}</span>
+      </nav>
+
+      <div className="rounded-2xl bg-primary-light/20 px-6 py-8 text-center mb-6">
+        <div className="text-5xl mb-2">{cat?.emoji}</div>
+        <h1 className="font-extrabold text-2xl">{cat?.name}</h1>
+        <p className="text-sm text-gray-500 mt-1">{base.length} منتج</p>
+      </div>
+
+      {/* الترتيب */}
+      <div className="flex gap-2 flex-wrap mb-4">
+        {sorts.map((s) => (
+          <button
+            key={s.id}
+            onClick={() => setActive(s.id)}
+            className={`${sortBtn} ${
+              active === s.id ? "bg-primary text-white border-primary" : "bg-white text-gray-600 border-gray-200 hover:border-primary"
+            }`}
+          >
+            {s.label}
+          </button>
+        ))}
+      </div>
+
+      {list.length ? (
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5 gap-x-3 md:gap-x-5 gap-y-3 md:gap-y-5">
+          {list.map((p) => (
+            <ProductCard key={p.id} product={p} />
+          ))}
+        </div>
+      ) : (
+        <p className="text-center text-gray-400 py-12">مفيش منتجات في القسم ده</p>
+      )}
+    </div>
+  );
+}

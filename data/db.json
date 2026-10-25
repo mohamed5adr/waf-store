@@ -1,0 +1,159 @@
+{
+  "products": [
+    {
+      "id": 1792895591778,
+      "name": "جاكيت شتوي تجريبي من الأدمن",
+      "price": 950,
+      "oldPrice": 1600,
+      "category": "tangt",
+      "emoji": "🧥",
+      "image": null,
+      "g": 2
+    },
+    {
+      "id": 1,
+      "name": "ترنج بولو كلاسيك",
+      "price": 625,
+      "oldPrice": 999,
+      "category": "tangt",
+      "emoji": "👔",
+      "g": 0,
+      "soldBadge": "الأكثر مبيعاً"
+    },
+    {
+      "id": 2,
+      "name": "ترنج R12 عصري",
+      "price": 700,
+      "oldPrice": 1350,
+      "category": "tangt",
+      "emoji": "🧥",
+      "g": 1
+    },
+    {
+      "id": 3,
+      "name": "ترنج سواريه فاخر",
+      "price": 700,
+      "oldPrice": 1350,
+      "category": "tangt",
+      "emoji": "🕴️",
+      "g": 2
+    },
+    {
+      "id": 4,
+      "name": "قميص اكسفورد مقلم عريض",
+      "price": 520,
+      "oldPrice": 999,
+      "category": "shirts",
+      "emoji": "🧑‍💼",
+      "g": 3
+    },
+    {
+      "id": 5,
+      "name": "طقم بسكوتة نص سوستة",
+      "price": 570,
+      "oldPrice": 1200,
+      "category": "suits",
+      "emoji": "🥻",
+      "g": 4
+    },
+    {
+      "id": 6,
+      "name": "سوت بيزك نص سوستة",
+      "price": 1000,
+      "oldPrice": 1850,
+      "category": "suits",
+      "emoji": "🥼",
+      "g": 5
+    },
+    {
+      "id": 7,
+      "name": "ترنج كاجوال زرارير",
+      "price": 670,
+      "oldPrice": 1050,
+      "category": "tangt",
+      "emoji": "👕",
+      "g": 6
+    },
+    {
+      "id": 8,
+      "name": "تيشيرت كاجوال نص سوستة",
+      "price": 570,
+      "oldPrice": 999,
+      "category": "tshirts",
+      "emoji": "👕",
+      "g": 7
+    },
+    {
+      "id": 9,
+      "name": "قميص كتان صيفي",
+      "price": 480,
+      "oldPrice": 780,
+      "category": "shirts",
+      "emoji": "🧑‍💼",
+      "g": 8
+    },
+    {
+      "id": 10,
+      "name": "بنطلون قماش واسع",
+      "price": 640,
+      "oldPrice": 1100,
+      "category": "pants",
+      "emoji": "👖",
+      "g": 9
+    },
+    {
+      "id": 11,
+      "name": "جاكيت شتوي مبطن",
+      "price": 1150,
+      "oldPrice": 1900,
+      "category": "outer",
+      "emoji": "🧥",
+      "g": 10
+    },
+    {
+      "id": 12,
+      "name": "طقم رياضي كامل",
+      "price": 820,
+      "oldPrice": 1400,
+      "category": "suits",
+      "emoji": "🥻",
+      "g": 11
+    },
+    {
+      "id": 13,
+      "name": "ترنج مخطط0025",
+      "price": 590,
+      "oldPrice": 950,
+      "category": "tangt",
+      "emoji": "🕴️",
+      "g": 12
+    },
+    {
+      "id": 14,
+      "name": "تيشيرت Oversize قطن",
+      "price": 350,
+      "oldPrice": 560,
+      "category": "tshirts",
+      "emoji": "👕",
+      "g": 13
+    },
+    {
+      "id": 15,
+      "name": "بنطلون جينز سكيني",
+      "price": 560,
+      "oldPrice": 900,
+      "category": "pants",
+      "emoji": "👖",
+      "g": 14
+    },
+    {
+      "id": 16,
+      "name": "قميص بولو مخروط",
+      "price": 610,
+      "oldPrice": 970,
+      "category": "shirts",
+      "emoji": "🧑‍💼",
+      "g": 15
+    }
+  ]
+}
