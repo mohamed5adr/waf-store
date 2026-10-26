@@ -4,12 +4,12 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { categories, discountOf, egp } from "@/lib/data";
 
-const ADMIN_PASSWORD = "admin123"; // ← غيّر كلمة السر دي في أي وقت
-
 export default function AdminPage() {
   const [authed, setAuthed] = useState(false);
-  const [pass, setPass] = useState("");
-  const [passErr, setPassErr] = useState("");
+  const [loginForm, setLoginForm] = useState({ username: "", password: "" });
+  const [loginErr, setLoginErr] = useState("");
+  const [logging, setLogging] = useState(false);
+
   const [editing, setEditing] = useState(null); // منتج جاري تعديله
   const [busy, setBusy] = useState(false);
   const [msg, setMsg] = useState(null);
@@ -18,6 +18,11 @@ export default function AdminPage() {
   const [uploadPreview, setUploadPreview] = useState(null);
 
   const [form, setForm] = useState({ name: "", price: "", oldPrice: "", category: "tangt", emoji: "🛍️", image: null });
+
+  // تغيير بيانات الدخول: القديم + الجديد
+  const [credsForm, setCredsForm] = useState({ oldUsername: "", oldPassword: "", newUsername: "", newPassword: "" });
+  const [credsMsg, setCredsMsg] = useState(null);
+  const [showCreds, setShowCreds] = useState(false);
 
   // أول ما تسجل الدخول → نجيب المنتجات
   useEffect(() => {
@@ -31,9 +36,43 @@ export default function AdminPage() {
     return d.products;
   };
 
-  const login = () => {
-    if (pass === ADMIN_PASSWORD) setAuthed(true);
-    else setPassErr("كلمة السر غلط");
+  const login = async () => {
+    setLogging(true);
+    setLoginErr("");
+    try {
+      const r = await fetch("/api/admin/credentials", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(loginForm),
+      });
+      const d = await r.json();
+      if (d.ok) setAuthed(true);
+      else setLoginErr(d.error || "خطأ في تسجيل الدخول");
+    } catch {
+      setLoginErr("تعذر الاتصال بالسيرفر");
+    } finally {
+      setLogging(false);
+    }
+  };
+
+  const changeCreds = async () => {
+    setCredsMsg(null);
+    try {
+      const r = await fetch("/api/admin/credentials", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(credsForm),
+      });
+      const d = await r.json();
+      if (d.ok) {
+        setCredsMsg({ ok: true, text: "✓ تم تغيير بيانات الدخول — سيتم استخدامها في الدخول الجاي" });
+        setCredsForm({ oldUsername: "", oldPassword: "", newUsername: "", newPassword: "" });
+      } else {
+        setCredsMsg({ ok: false, text: d.error || "فشل التغيير" });
+      }
+    } catch {
+      setCredsMsg({ ok: false, text: "تعذر الاتصال بالسيرفر" });
+    }
   };
 
   const set = (k) => (e) => setForm((f) => ({ ...f, [k]: e.target.value }));
@@ -100,7 +139,7 @@ export default function AdminPage() {
     await loadProducts();
   };
 
-  // شاشة كلمة السر
+  // شاشة تسجيل الدخول (يوزرنيم + باسورد)
   if (!authed) {
     return (
       <div className="max-w-sm mx-auto mt-16 bg-white rounded-2xl border border-black/5 shadow-sm p-7 text-center">
@@ -108,19 +147,27 @@ export default function AdminPage() {
         <h1 className="font-extrabold text-xl mb-1">لوحة تحكم الأدمن</h1>
         <p className="text-xs text-gray-400 mb-5">دي منطقة مخصوص للإدارة فقط</p>
         <input
-          type="password"
-          value={pass}
-          onChange={(e) => setPass(e.target.value)}
+          type="text"
+          value={loginForm.username}
+          onChange={(e) => setLoginForm((f) => ({ ...f, username: e.target.value }))}
           onKeyDown={(e) => e.key === "Enter" && login()}
-          placeholder="كلمة السر"
+          placeholder="اسم المستخدم"
           className="w-full h-11 rounded-xl border border-gray-200 px-4 mb-2 focus:outline-none focus:border-primary text-center"
           autoFocus
         />
-        {passErr && <p className="text-xs text-accent-red mb-2">{passErr}</p>}
-        <button onClick={login} className="w-full bg-primary text-white font-bold py-3 rounded-xl hover:bg-primary-dark">
-          دخول
+        <input
+          type="password"
+          value={loginForm.password}
+          onChange={(e) => setLoginForm((f) => ({ ...f, password: e.target.value }))}
+          onKeyDown={(e) => e.key === "Enter" && login()}
+          placeholder="كلمة السر"
+          className="w-full h-11 rounded-xl border border-gray-200 px-4 mb-2 focus:outline-none focus:border-primary text-center"
+        />
+        {loginErr && <p className="text-xs text-accent-red mb-2">{loginErr}</p>}
+        <button onClick={login} disabled={logging} className="w-full bg-primary text-white font-bold py-3 rounded-xl hover:bg-primary-dark disabled:opacity-50">
+          {logging ? "⏳ جاري التحقق..." : "دخول"}
         </button>
-        <p className="text-[10px] text-gray-300 mt-4">كلمة سر العرض التجريبي: admin123</p>
+        <p className="text-[10px] text-gray-300 mt-4">الافتراضي: اسم المستخدم 0000 وكلمة السر 0000</p>
       </div>
     );
   }
@@ -143,53 +190,76 @@ export default function AdminPage() {
       )}
 
       <div className="grid lg:grid-cols-5 gap-6">
-        {/* نموذج الإضافة/التعديل */}
-        <div className="lg:col-span-2 bg-white rounded-2xl border border-black/5 shadow-sm p-5 h-fit">
-          <h2 className="font-bold mb-4">{editing ? `✏️ تعديل: ${editing.name}` : "➕ إضافة منتج جديد"}</h2>
+        <div className="lg:col-span-2 space-y-5">
+          {/* تغيير بيانات الدخول */}
+          <div className="bg-white rounded-2xl border border-black/5 shadow-sm p-5">
+            <button onClick={() => setShowCreds(!showCreds)} className="w-full flex items-center justify-between text-right">
+              <h2 className="font-bold">🔑 بيانات دخول الأدمن</h2>
+              <span className="text-xs text-primary">{showCreds ? "إخفاء ▲" : "تغيير ▼"}</span>
+            </button>
 
-          <label className="text-sm font-bold block mb-1.5">اسم المنتج *</label>
-          <input value={form.name} onChange={set("name")} className="w-full h-11 rounded-xl border border-gray-200 px-4 mb-3 focus:outline-none focus:border-primary" />
-
-          <div className="grid grid-cols-2 gap-3 mb-3">
-            <div>
-              <label className="text-sm font-bold block mb-1.5">السعر بعد الخصم *</label>
-              <input type="number" value={form.price} onChange={set("price")} className="w-full h-11 rounded-xl border border-gray-200 px-4 focus:outline-none focus:border-primary" />
-            </div>
-            <div>
-              <label className="text-sm font-bold block mb-1.5">السعر قبل الخصم</label>
-              <input type="number" value={form.oldPrice} onChange={set("oldPrice")} className="w-full h-11 rounded-xl border border-gray-200 px-4 focus:outline-none focus:border-primary" />
-            </div>
+            {showCreds && (
+              <div className="mt-4 space-y-3">
+                <input value={credsForm.oldUsername} onChange={(e) => setCredsForm((f) => ({ ...f, oldUsername: e.target.value }))} placeholder="اسم المستخدم القديم" className="w-full h-11 rounded-xl border border-gray-200 px-4 focus:outline-none focus:border-primary" />
+                <input type="password" value={credsForm.oldPassword} onChange={(e) => setCredsForm((f) => ({ ...f, oldPassword: e.target.value }))} placeholder="كلمة السر القديمة" className="w-full h-11 rounded-xl border border-gray-200 px-4 focus:outline-none focus:border-primary" />
+                <div className="border-t border-dashed border-gray-200 pt-1"></div>
+                <input value={credsForm.newUsername} onChange={(e) => setCredsForm((f) => ({ ...f, newUsername: e.target.value }))} placeholder="اسم المستخدم الجديد" className="w-full h-11 rounded-xl border border-gray-200 px-4 focus:outline-none focus:border-primary" />
+                <input type="password" value={credsForm.newPassword} onChange={(e) => setCredsForm((f) => ({ ...f, newPassword: e.target.value }))} placeholder="كلمة السر الجديدة" className="w-full h-11 rounded-xl border border-gray-200 px-4 focus:outline-none focus:border-primary" />
+                {credsMsg && <p className={`text-xs ${credsMsg.ok ? "text-emerald-600" : "text-accent-red"}`}>{credsMsg.text}</p>}
+                <button onClick={changeCreds} className="w-full bg-primary text-white font-bold py-3 rounded-xl hover:bg-primary-dark">
+                  حفظ البيانات الجديدة
+                </button>
+              </div>
+            )}
           </div>
 
-          <label className="text-sm font-bold block mb-1.5">القسم</label>
-          <select value={form.category} onChange={set("category")} className="w-full h-11 rounded-xl border border-gray-200 px-4 mb-3 focus:outline-none focus:border-primary">
-            {categories.map((c) => <option key={c.id} value={c.id}>{c.emoji} {c.name}</option>)}
-          </select>
+          {/* نموذج الإضافة/التعديل */}
+          <div className="bg-white rounded-2xl border border-black/5 shadow-sm p-5">
+            <h2 className="font-bold mb-4">{editing ? `✏️ تعديل: ${editing.name}` : "➕ إضافة منتج جديد"}</h2>
 
-          {/* الصورة */}
-          <label className="text-sm font-bold block mb-1.5">صورة المنتج 📷</label>
-          <input type="file" accept="image/*" onChange={(e) => uploadFile(e.target.files?.[0])} className="w-full text-xs mb-2 file:mr-2 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-primary file:text-white file:text-xs file:font-bold" />
-          {uploading && <p className="text-xs text-gray-400 mb-2">⏳ بيتم رفع الصورة...</p>}
-          {uploadPreview && (
-            <div className="mb-3 flex items-center gap-3">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={uploadPreview} className="w-16 h-16 object-cover rounded-lg border" alt="معاينة" />
-              <button onClick={() => { setForm((f) => ({ ...f, image: null })); setUploadPreview(null); }} className="text-xs text-accent-red hover:underline">إزالة الصورة</button>
+            <label className="text-sm font-bold block mb-1.5">اسم المنتج *</label>
+            <input value={form.name} onChange={set("name")} className="w-full h-11 rounded-xl border border-gray-200 px-4 mb-3 focus:outline-none focus:border-primary" />
+
+            <div className="grid grid-cols-2 gap-3 mb-3">
+              <div>
+                <label className="text-sm font-bold block mb-1.5">السعر بعد الخصم *</label>
+                <input type="number" value={form.price} onChange={set("price")} className="w-full h-11 rounded-xl border border-gray-200 px-4 focus:outline-none focus:border-primary" />
+              </div>
+              <div>
+                <label className="text-sm font-bold block mb-1.5">السعر قبل الخصم</label>
+                <input type="number" value={form.oldPrice} onChange={set("oldPrice")} className="w-full h-11 rounded-xl border border-gray-200 px-4 focus:outline-none focus:border-primary" />
+              </div>
             </div>
-          )}
 
-          <label className="text-sm font-bold block mb-1.5">إيموجي بديل (لو مرفقتش صورة)</label>
-          <input value={form.emoji} onChange={set("emoji")} className="w-full h-11 rounded-xl border border-gray-200 px-4 mb-4 focus:outline-none focus:border-primary text-center" />
+            <label className="text-sm font-bold block mb-1.5">القسم</label>
+            <select value={form.category} onChange={set("category")} className="w-full h-11 rounded-xl border border-gray-200 px-4 mb-3 focus:outline-none focus:border-primary">
+              {categories.map((c) => <option key={c.id} value={c.id}>{c.emoji} {c.name}</option>)}
+            </select>
 
-          <div className="flex gap-2">
-            <button onClick={saveProduct} disabled={busy || uploading} className="flex-1 bg-primary text-white font-bold py-3 rounded-xl hover:bg-primary-dark disabled:opacity-50">
-              {editing ? "حفظ التعديلات" : "إضافة المنتج"}
-            </button>
-            {editing && (
-              <button onClick={resetForm} className="px-5 border border-gray-200 rounded-xl text-sm font-bold text-gray-500 hover:border-primary hover:text-primary">
-                إلغاء
-              </button>
+            <label className="text-sm font-bold block mb-1.5">صورة المنتج 📷</label>
+            <input type="file" accept="image/*" onChange={(e) => uploadFile(e.target.files?.[0])} className="w-full text-xs mb-2 file:mr-2 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-primary file:text-white file:text-xs file:font-bold" />
+            {uploading && <p className="text-xs text-gray-400 mb-2">⏳ بيتم رفع الصورة...</p>}
+            {uploadPreview && (
+              <div className="mb-3 flex items-center gap-3">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={uploadPreview} className="w-16 h-16 object-cover rounded-lg border" alt="معاينة" />
+                <button onClick={() => { setForm((f) => ({ ...f, image: null })); setUploadPreview(null); }} className="text-xs text-accent-red hover:underline">إزالة الصورة</button>
+              </div>
             )}
+
+            <label className="text-sm font-bold block mb-1.5">إيموجي بديل (لو مرفقتش صورة)</label>
+            <input value={form.emoji} onChange={set("emoji")} className="w-full h-11 rounded-xl border border-gray-200 px-4 mb-4 focus:outline-none focus:border-primary text-center" />
+
+            <div className="flex gap-2">
+              <button onClick={saveProduct} disabled={busy || uploading} className="flex-1 bg-primary text-white font-bold py-3 rounded-xl hover:bg-primary-dark disabled:opacity-50">
+                {editing ? "حفظ التعديلات" : "إضافة المنتج"}
+              </button>
+              {editing && (
+                <button onClick={resetForm} className="px-5 border border-gray-200 rounded-xl text-sm font-bold text-gray-500 hover:border-primary hover:text-primary">
+                  إلغاء
+                </button>
+              )}
+            </div>
           </div>
         </div>
 
@@ -205,7 +275,7 @@ export default function AdminPage() {
           {!loadedList ? (
             <p className="text-center text-gray-400 py-10">⏳ بنجيب المنتجات...</p>
           ) : loadedList.length === 0 ? (
-            <p className="text-center text-gray-400 py-10">مفيش منتجات — ضيف الأول من النموذ الج</p>
+            <p className="text-center text-gray-400 py-10">مفيش منتجات — ضيف الأول من النموذج</p>
           ) : (
             <div className="divide-y divide-gray-100">
               {loadedList.map((p, i) => (
