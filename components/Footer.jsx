@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { categories, store } from "@/lib/data";
+import { store } from "@/lib/data";
+import { useCategories } from "@/lib/hooks";
 
 function Disclosure({ title, children }) {
   const open = () => {
@@ -24,12 +25,14 @@ function Disclosure({ title, children }) {
 }
 
 export default function Footer() {
+  const { categories } = useCategories();
+  const cats = categories || [];
   return (
     <footer className="bg-white text-[#010101]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
         <div className="lg:hidden">
           <Disclosure title="الأقسام">
-            {categories.map((c) => (
+            {cats.map((c) => (
               <Link key={c.id} href={`/collections/${c.id}`} className="text-sm text-gray-600 hover:text-primary py-1">
                 {c.name}
               </Link>
@@ -55,7 +58,7 @@ export default function Footer() {
           <div>
             <h3 className="font-bold text-base mb-4">الأقسام</h3>
             <ul className="space-y-2">
-              {categories.map((c) => (
+              {cats.map((c) => (
                 <li key={c.id}>
                   <Link href={`/collections/${c.id}`} className="text-sm text-gray-600 hover:text-primary">{c.name}</Link>
                 </li>

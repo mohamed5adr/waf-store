@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { categories, discountOf, egp } from "@/lib/data";
+import { categories as seedCats, discountOf, egp } from "@/lib/data";
+import { useCategories } from "@/lib/hooks";
 
 export default function AdminPage() {
   const [authed, setAuthed] = useState(false);
@@ -18,6 +19,15 @@ export default function AdminPage() {
   const [uploadPreview, setUploadPreview] = useState(null);
 
   const [form, setForm] = useState({ name: "", price: "", oldPrice: "", category: "tangt", emoji: "🛍️", image: null });
+
+  // الأقسام: قائمة ديناميكية من السيرفر + إدارة كاملة من اللوحة
+  const { categories: fetchedCats, reload: reloadCats } = useCategories();
+  const cats = fetchedCats || seedCats;
+  const [catForm, setCatForm] = useState({ id: null, name: "", emoji: "🛍️", image: null });
+  const [catPreview, setCatPreview] = useState(null);
+  const [catMsg, setCatMsg] = useState(null);
+  const [catBusy, setCatBusy] = useState(false);
+  const [showCats, setShowCats] = useState(false);
 
   // تغيير بيانات الدخول: القديم + الجديد
   const [credsForm, setCredsForm] = useState({ oldUsername: "", oldPassword: "", newUsername: "", newPassword: "" });
@@ -94,6 +104,66 @@ export default function AdminPage() {
     } finally {
       setUploading(false);
     }
+  };
+
+  // وظائف إدارة الأقسام
+  const uploadCategoryImage = async (file) => {
+    if (!file) return;
+    setCatBusy(true);
+    try {
+      const fd = new FormData();
+      fd.append("file", file);
+      const r = await fetch("/api/upload", { method: "POST", body: fd });
+      const d = await r.json();
+      if (d.url) {
+        setCatForm((f) => ({ ...f, image: d.url }));
+        setCatPreview(d.url);
+      } else {
+        setCatMsg({ ok: false, text: d.error || "فشل رفع صورة الغلاف" });
+      }
+    } finally {
+      setCatBusy(false);
+    }
+  };
+
+  const resetCatForm = () => {
+    setCatForm({ id: null, name: "", emoji: "🛍️", image: null });
+    setCatPreview(null);
+    setCatMsg(null);
+  };
+
+  const saveCategory = async () => {
+    setCatMsg(null);
+    setCatBusy(true);
+    try {
+      const url = catForm.id ? `/api/categories/${catForm.id}` : "/api/categories";
+      const r = await fetch(url, {
+        method: catForm.id ? "PUT" : "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name: catForm.name, emoji: catForm.emoji, image: catForm.image }),
+      });
+      const d = await r.json();
+      if (d.ok) {
+        setCatMsg({ ok: true, text: catForm.id ? "✓ اتعدل القسم" : "✓ اتضاف القسم" });
+        resetCatForm();
+        await reloadCats();
+      } else {
+        setCatMsg({ ok: false, text: d.error || "فشل الحفظ" });
+      }
+    } catch {
+      setCatMsg({ ok: false, text: "تعذر الاتصال بالسيرفر" });
+    } finally {
+      setCatBusy(false);
+    }
+  };
+
+  const deleteCategory = async (c) => {
+    if (!window.confirm(`متأكد عايز تمسح قسم "${c.name}"؟`)) return;
+    const r = await fetch(`/api/categories/${c.id}`, { method: "DELETE" });
+    const d = await r.json();
+    if (d.ok) setCatMsg({ ok: true, text: "✓ اتمسح القسم" });
+    else setCatMsg({ ok: false, text: d.error || "فشل المسح" });
+    await reloadCats();
   };
 
   const resetForm = () => {
@@ -213,6 +283,64 @@ export default function AdminPage() {
             )}
           </div>
 
+          {/* إدارة الأقسام: إضافة / تعديل / مسح + صورة غلاف */}
+          <div className="bg-white rounded-2xl border border-black/5 shadow-sm p-5">
+            <button onClick={() => setShowCats(!showCats)} className="w-full flex items-center justify-between text-right">
+              <h2 className="font-bold">🗂️ إدارة الأقسام</h2>
+              <span className="text-xs text-primary">{showCats ? "إخفاء ▲" : "إدارة ▼"}</span>
+            </button>
+
+            {showCats && (
+              <div className="mt-4 space-y-4">
+                <div className="divide-y divide-gray-100 border border-gray-100 rounded-xl overflow-hidden">
+                  {cats.map((c) => (
+                    <div key={c.id} className="flex items-center gap-3 px-3 py-2.5 bg-white">
+                      {c.image ? (
+                        /* eslint-disable-next-line @next/next/no-img-element */
+                        <img src={c.image} className="w-10 h-10 rounded-lg object-cover shrink-0" alt={c.name} />
+                      ) : (
+                        <span className="w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center text-xl shrink-0">{c.emoji}</span>
+                      )}
+                      <div className="grow min-w-0">
+                        <p className="text-sm font-bold">{c.name}</p>
+                        <p className="text-[10px] text-gray-400">{(loadedList || []).filter((p) => p.category === c.id).length} منتج</p>
+                      </div>
+                      <button onClick={() => { setCatForm({ id: c.id, name: c.name, emoji: c.emoji || "🛍️", image: c.image || null }); setCatPreview(c.image || null); setCatMsg(null); }} className="text-xs bg-gray-100 hover:bg-gray-200 rounded-lg px-2.5 py-1.5 shrink-0">✏️</button>
+                      <button onClick={() => deleteCategory(c)} className="text-xs bg-red-50 text-accent-red hover:bg-red-100 rounded-lg px-2.5 py-1.5 shrink-0">🗑️</button>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="border border-dashed border-gray-200 rounded-xl p-4 space-y-3">
+                  <p className="text-sm font-bold">{catForm.id ? "✏️ تعديل القسم" : "➕ قسم جديد"}</p>
+                  <input value={catForm.name} onChange={(e) => setCatForm((f) => ({ ...f, name: e.target.value }))} placeholder="اسم القسم (مثال: أحذية)" className="w-full h-11 rounded-xl border border-gray-200 px-4 focus:outline-none focus:border-primary" />
+                  <input value={catForm.emoji} onChange={(e) => setCatForm((f) => ({ ...f, emoji: e.target.value }))} placeholder="إيموجي القسم (اختياري — بديل الصورة)" className="w-full h-11 rounded-xl border border-gray-200 px-4 focus:outline-none focus:border-primary text-center" />
+                  <div>
+                    <label className="text-xs font-bold block mb-1.5">صورة غلاف القسم 📷 (دي اللي هتبقى واجهة القسم)</label>
+                    <input type="file" accept="image/*" onChange={(e) => uploadCategoryImage(e.target.files?.[0])} className="w-full text-xs file:mr-2 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-primary file:text-white file:text-xs file:font-bold" />
+                  </div>
+                  {catBusy && <p className="text-xs text-gray-400">⏳ بيتم رفع الصورة...</p>}
+                  {catPreview && (
+                    <div className="flex items-center gap-3">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src={catPreview} className="w-16 h-16 object-cover rounded-lg border" alt="غلاف" />
+                      <button onClick={() => { setCatForm((f) => ({ ...f, image: null })); setCatPreview(null); }} className="text-xs text-accent-red hover:underline">إزالة الغلاف</button>
+                    </div>
+                  )}
+                  {catMsg && <p className={`text-xs ${catMsg.ok ? "text-emerald-600" : "text-accent-red"}`}>{catMsg.text}</p>}
+                  <div className="flex gap-2">
+                    <button onClick={saveCategory} disabled={catBusy} className="flex-1 bg-primary text-white font-bold py-3 rounded-xl hover:bg-primary-dark disabled:opacity-50">
+                      {catForm.id ? "حفظ التعديل" : "إضافة القسم"}
+                    </button>
+                    {catForm.id && (
+                      <button onClick={resetCatForm} className="px-5 border border-gray-200 rounded-xl text-sm font-bold text-gray-500 hover:border-primary hover:text-primary">إلغاء</button>
+                    )}
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+
           {/* نموذج الإضافة/التعديل */}
           <div className="bg-white rounded-2xl border border-black/5 shadow-sm p-5">
             <h2 className="font-bold mb-4">{editing ? `✏️ تعديل: ${editing.name}` : "➕ إضافة منتج جديد"}</h2>
@@ -233,7 +361,7 @@ export default function AdminPage() {
 
             <label className="text-sm font-bold block mb-1.5">القسم</label>
             <select value={form.category} onChange={set("category")} className="w-full h-11 rounded-xl border border-gray-200 px-4 mb-3 focus:outline-none focus:border-primary">
-              {categories.map((c) => <option key={c.id} value={c.id}>{c.emoji} {c.name}</option>)}
+              {cats.map((c) => <option key={c.id} value={c.id}>{c.emoji} {c.name}</option>)}
             </select>
 
             <label className="text-sm font-bold block mb-1.5">صورة المنتج 📷</label>
@@ -289,7 +417,7 @@ export default function AdminPage() {
                   )}
                   <div className="grow min-w-0">
                     <p className="text-sm font-bold line-clamp-1">{p.name}</p>
-                    <p className="text-xs text-gray-400">{categories.find((c) => c.id === p.category)?.name || p.category}</p>
+                    <p className="text-xs text-gray-400">{cats.find((c) => c.id === p.category)?.name || p.category}</p>
                   </div>
                   <div className="text-left shrink-0">
                     <p className="text-primary font-bold text-sm">{egp(p.price)}</p>

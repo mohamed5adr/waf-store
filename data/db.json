@@ -9,7 +9,7 @@
       "emoji": "👔",
       "g": 0,
       "soldBadge": "الأكثر مبيعاً",
-      "image": "/products/1.jpg"
+      "image": null
     },
     {
       "id": 2,
@@ -19,7 +19,7 @@
       "category": "tangt",
       "emoji": "🧥",
       "g": 1,
-      "image": "/products/2.jpg"
+      "image": null
     },
     {
       "id": 3,
@@ -29,7 +29,7 @@
       "category": "tangt",
       "emoji": "🕴️",
       "g": 2,
-      "image": "/products/3.jpg"
+      "image": null
     },
     {
       "id": 4,
@@ -39,7 +39,7 @@
       "category": "shirts",
       "emoji": "🧑‍💼",
       "g": 3,
-      "image": "/products/4.jpg"
+      "image": null
     },
     {
       "id": 5,
@@ -49,7 +49,7 @@
       "category": "suits",
       "emoji": "🥻",
       "g": 4,
-      "image": "/products/5.jpg"
+      "image": null
     },
     {
       "id": 6,
@@ -59,7 +59,7 @@
       "category": "suits",
       "emoji": "🥼",
       "g": 5,
-      "image": "/products/6.jpg"
+      "image": null
     },
     {
       "id": 7,
@@ -69,7 +69,7 @@
       "category": "tangt",
       "emoji": "👕",
       "g": 6,
-      "image": "/products/7.jpg"
+      "image": null
     },
     {
       "id": 8,
@@ -79,7 +79,7 @@
       "category": "tshirts",
       "emoji": "👕",
       "g": 7,
-      "image": "/products/8.jpg"
+      "image": null
     },
     {
       "id": 9,
@@ -89,7 +89,7 @@
       "category": "shirts",
       "emoji": "🧑‍💼",
       "g": 8,
-      "image": "/products/9.jpg"
+      "image": null
     },
     {
       "id": 10,
@@ -99,7 +99,7 @@
       "category": "pants",
       "emoji": "👖",
       "g": 9,
-      "image": "/products/10.jpg"
+      "image": null
     },
     {
       "id": 11,
@@ -109,7 +109,7 @@
       "category": "outer",
       "emoji": "🧥",
       "g": 10,
-      "image": "/products/11.jpg"
+      "image": null
     },
     {
       "id": 12,
@@ -119,7 +119,7 @@
       "category": "suits",
       "emoji": "🥻",
       "g": 11,
-      "image": "/products/12.jpg"
+      "image": null
     },
     {
       "id": 13,
@@ -129,7 +129,7 @@
       "category": "tangt",
       "emoji": "🕴️",
       "g": 12,
-      "image": "/products/13.jpg"
+      "image": null
     },
     {
       "id": 14,
@@ -139,7 +139,7 @@
       "category": "tshirts",
       "emoji": "👕",
       "g": 13,
-      "image": "/products/14.jpg"
+      "image": null
     },
     {
       "id": 15,
@@ -149,7 +149,7 @@
       "category": "pants",
       "emoji": "👖",
       "g": 14,
-      "image": "/products/15.jpg"
+      "image": null
     },
     {
       "id": 16,
@@ -159,7 +159,45 @@
       "category": "shirts",
       "emoji": "🧑‍💼",
       "g": 15,
-      "image": "/products/16.jpg"
+      "image": null
+    }
+  ],
+  "categories": [
+    {
+      "id": "tangt",
+      "name": "ترنجات",
+      "emoji": "👔",
+      "image": null
+    },
+    {
+      "id": "shirts",
+      "name": "قمصان",
+      "emoji": "🧑‍💼",
+      "image": null
+    },
+    {
+      "id": "tshirts",
+      "name": "تيشيرتات",
+      "emoji": "👕",
+      "image": null
+    },
+    {
+      "id": "suits",
+      "name": "أطقم",
+      "emoji": "🥻",
+      "image": null
+    },
+    {
+      "id": "pants",
+      "name": "بناطيل",
+      "emoji": "👖",
+      "image": null
+    },
+    {
+      "id": "outer",
+      "name": "جاكيتات",
+      "emoji": "🧥",
+      "image": null
     }
   ]
 }

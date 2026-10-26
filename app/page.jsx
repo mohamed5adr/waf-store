@@ -4,21 +4,29 @@ import Link from "next/link";
 import Carousel from "@/components/Carousel";
 import ProductCard from "@/components/ProductCard";
 import { useCart } from "@/lib/cart";
-import { useProducts } from "@/lib/hooks";
-import { categories, reviews, features, discountOf, egp } from "@/lib/data";
+import { useProducts, useCategories } from "@/lib/hooks";
+import { reviews, features, discountOf, egp } from "@/lib/data";
 
 function CategoryCircles() {
+  const { categories } = useCategories();
   return (
     <Carousel title="الأقسام" viewAllHref="/collections">
-      {categories.map((c) => (
+      {(categories || []).map((c) => (
         <Link
           key={c.id}
           href={`/collections/${c.id}`}
           className="snap-start shrink-0 w-28 flex flex-col items-center gap-2"
         >
-          <div className="w-24 h-24 rounded-full bg-white border border-black/5 shadow-sm flex items-center justify-center text-4xl hover:border-primary hover:shadow-md transition-all">
-            {c.emoji}
-          </div>
+          {c.image ? (
+            <div className="w-24 h-24 rounded-full overflow-hidden bg-white border border-black/5 shadow-sm hover:border-primary hover:shadow-md transition-all">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={c.image} alt={c.name} className="w-full h-full object-cover" />
+            </div>
+          ) : (
+            <div className="w-24 h-24 rounded-full bg-white border border-black/5 shadow-sm flex items-center justify-center text-4xl hover:border-primary hover:shadow-md transition-all">
+              {c.emoji}
+            </div>
+          )}
           <span className="text-sm font-semibold text-gray-700">{c.name}</span>
         </Link>
       ))}
