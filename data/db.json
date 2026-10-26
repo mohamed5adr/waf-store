@@ -9,7 +9,7 @@
       "emoji": "👔",
       "g": 0,
       "soldBadge": "الأكثر مبيعاً",
-      "image": "https://images.pexels.com/photos/9880858/pexels-photo-9880858.jpeg?auto=compress&cs=tinysrgb&w=700&h=900&fit=crop"
+      "image": "/products/1.jpg"
     },
     {
       "id": 2,
@@ -19,7 +19,7 @@
       "category": "tangt",
       "emoji": "🧥",
       "g": 1,
-      "image": "https://images.pexels.com/photos/35902078/pexels-photo-35902078.jpeg?auto=compress&cs=tinysrgb&w=700&h=900&fit=crop"
+      "image": "/products/2.jpg"
     },
     {
       "id": 3,
@@ -29,7 +29,7 @@
       "category": "tangt",
       "emoji": "🕴️",
       "g": 2,
-      "image": "https://images.pexels.com/photos/36311379/pexels-photo-36311379.jpeg?auto=compress&cs=tinysrgb&w=700&h=900&fit=crop"
+      "image": "/products/3.jpg"
     },
     {
       "id": 4,
@@ -39,7 +39,7 @@
       "category": "shirts",
       "emoji": "🧑‍💼",
       "g": 3,
-      "image": "https://images.pexels.com/photos/8468727/pexels-photo-8468727.jpeg?auto=compress&cs=tinysrgb&w=700&h=900&fit=crop"
+      "image": "/products/4.jpg"
     },
     {
       "id": 5,
@@ -49,7 +49,7 @@
       "category": "suits",
       "emoji": "🥻",
       "g": 4,
-      "image": "https://images.pexels.com/photos/30916976/pexels-photo-30916976.jpeg?auto=compress&cs=tinysrgb&w=700&h=900&fit=crop"
+      "image": "/products/5.jpg"
     },
     {
       "id": 6,
@@ -59,7 +59,7 @@
       "category": "suits",
       "emoji": "🥼",
       "g": 5,
-      "image": "https://images.pexels.com/photos/29722004/pexels-photo-29722004.jpeg?auto=compress&cs=tinysrgb&w=700&h=900&fit=crop"
+      "image": "/products/6.jpg"
     },
     {
       "id": 7,
@@ -69,7 +69,7 @@
       "category": "tangt",
       "emoji": "👕",
       "g": 6,
-      "image": "https://images.pexels.com/photos/36486684/pexels-photo-36486684.jpeg?auto=compress&cs=tinysrgb&w=700&h=900&fit=crop"
+      "image": "/products/7.jpg"
     },
     {
       "id": 8,
@@ -79,7 +79,7 @@
       "category": "tshirts",
       "emoji": "👕",
       "g": 7,
-      "image": "https://images.pexels.com/photos/4115035/pexels-photo-4115035.jpeg?auto=compress&cs=tinysrgb&w=700&h=900&fit=crop"
+      "image": "/products/8.jpg"
     },
     {
       "id": 9,
@@ -89,7 +89,7 @@
       "category": "shirts",
       "emoji": "🧑‍💼",
       "g": 8,
-      "image": "https://images.pexels.com/photos/20544951/pexels-photo-20544951.jpeg?auto=compress&cs=tinysrgb&w=700&h=900&fit=crop"
+      "image": "/products/9.jpg"
     },
     {
       "id": 10,
@@ -99,7 +99,7 @@
       "category": "pants",
       "emoji": "👖",
       "g": 9,
-      "image": "https://images.pexels.com/photos/9464625/pexels-photo-9464625.jpeg?auto=compress&cs=tinysrgb&w=700&h=900&fit=crop"
+      "image": "/products/10.jpg"
     },
     {
       "id": 11,
@@ -109,7 +109,7 @@
       "category": "outer",
       "emoji": "🧥",
       "g": 10,
-      "image": "https://images.pexels.com/photos/6712133/pexels-photo-6712133.jpeg?auto=compress&cs=tinysrgb&w=700&h=900&fit=crop"
+      "image": "/products/11.jpg"
     },
     {
       "id": 12,
@@ -119,7 +119,7 @@
       "category": "suits",
       "emoji": "🥻",
       "g": 11,
-      "image": "https://images.pexels.com/photos/28863325/pexels-photo-28863325.jpeg?auto=compress&cs=tinysrgb&w=700&h=900&fit=crop"
+      "image": "/products/12.jpg"
     },
     {
       "id": 13,
@@ -129,7 +129,7 @@
       "category": "tangt",
       "emoji": "🕴️",
       "g": 12,
-      "image": "https://images.pexels.com/photos/8069812/pexels-photo-8069812.jpeg?auto=compress&cs=tinysrgb&w=700&h=900&fit=crop"
+      "image": "/products/13.jpg"
     },
     {
       "id": 14,
@@ -139,7 +139,7 @@
       "category": "tshirts",
       "emoji": "👕",
       "g": 13,
-      "image": "https://images.pexels.com/photos/9266466/pexels-photo-9266466.jpeg?auto=compress&cs=tinysrgb&w=700&h=900&fit=crop"
+      "image": "/products/14.jpg"
     },
     {
       "id": 15,
@@ -149,7 +149,7 @@
       "category": "pants",
       "emoji": "👖",
       "g": 14,
-      "image": "https://images.pexels.com/photos/10133278/pexels-photo-10133278.jpeg?auto=compress&cs=tinysrgb&w=700&h=900&fit=crop"
+      "image": "/products/15.jpg"
     },
     {
       "id": 16,
@@ -159,7 +159,7 @@
       "category": "shirts",
       "emoji": "🧑‍💼",
       "g": 15,
-      "image": "https://images.pexels.com/photos/7648372/pexels-photo-7648372.jpeg?auto=compress&cs=tinysrgb&w=700&h=900&fit=crop"
+      "image": "/products/16.jpg"
     }
   ]
 }
