@@ -3,6 +3,7 @@ import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import MobileNav from "@/components/MobileNav";
+import ConnectionWatcher from "@/components/ConnectionWatcher";
 import { CartProvider } from "@/lib/cart";
 import { store } from "@/lib/data";
 
@@ -24,6 +25,7 @@ export default function RootLayout({ children }) {
             </main>
             <Footer />
             <MobileNav />
+            <ConnectionWatcher />
           </div>
         </CartProvider>
       </body>
