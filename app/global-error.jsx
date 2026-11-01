@@ -15,7 +15,7 @@ export default function GlobalError({ error, reset }) {
             onClick={reset}
             style={{ background: "#136163", color: "#fff", fontWeight: 700, padding: "12px 28px", borderRadius: 12, border: "none", fontSize: 15, cursor: "pointer" }}
           >
-            🔄 حاول تاني
+            🔄 حاول مرة أخرى
           </button>
         </div>
       </body>

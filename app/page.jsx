@@ -6,6 +6,7 @@ import ProductCard from "@/components/ProductCard";
 import { useCart } from "@/lib/cart";
 import { useProducts, useCategories } from "@/lib/hooks";
 import { reviews, features, discountOf, egp } from "@/lib/data";
+import RetryError from "@/components/RetryError";
 
 function CategoryCircles() {
   const { categories } = useCategories();
@@ -36,7 +37,7 @@ function CategoryCircles() {
 
 export default function HomePage() {
   const { add } = useCart();
-  const { products, error } = useProducts();
+  const { products, error, reload } = useProducts();
 
   if (!products) {
     return (
@@ -47,7 +48,7 @@ export default function HomePage() {
     );
   }
   if (error) {
-    return <p className="text-center text-accent-red py-16">حصلت مشكلة في تحميل المنتجات: {error}</p>;
+    return <RetryError onRetry={reload} />;
   }
 
   const bestSellers = products.slice(0, 8);

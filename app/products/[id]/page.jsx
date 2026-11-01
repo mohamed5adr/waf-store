@@ -7,9 +7,10 @@ import ProductImage from "@/components/ProductImage";
 import { useCart } from "@/lib/cart";
 import { useProducts } from "@/lib/hooks";
 import { sizes, discountOf, egp } from "@/lib/data";
+import RetryError from "@/components/RetryError";
 
 export default function ProductPage({ params }) {
-  const { products, error } = useProducts();
+  const { products, error, reload } = useProducts();
   const product = products ? products.find((p) => String(p.id) === params.id) : null;
   const router = useRouter();
   const { add } = useCart();
@@ -17,7 +18,7 @@ export default function ProductPage({ params }) {
   const [added, setAdded] = useState(false);
 
   if (!products) return <p className="text-center text-gray-400 py-24">⏳ بنجيب المنتجات...</p>;
-  if (error) return <p className="text-center text-accent-red py-16">مشكلة تحميل: {error}</p>;
+  if (error) return <RetryError onRetry={reload} />;
 
   if (!product) {
     return <p className="text-center text-gray-400 py-16">المنتج مش موجود 😕</p>;

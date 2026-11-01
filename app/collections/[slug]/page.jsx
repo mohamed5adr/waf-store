@@ -5,6 +5,7 @@ import { useState } from "react";
 import ProductCard from "@/components/ProductCard";
 import { useProducts, useCategories } from "@/lib/hooks";
 import { discountOf } from "@/lib/data";
+import RetryError from "@/components/RetryError";
 
 const sorts = [
   { id: "default", label: "الافتراضي" },
@@ -15,7 +16,7 @@ const sorts = [
 
 export default function CollectionPage({ params }) {
   const { categories } = useCategories();
-  const { products, error } = useProducts();
+  const { products, error, reload } = useProducts();
   const [active, setActive] = useState("default");
   const cat = (categories || []).find((c) => c.id === params.slug);
   const base = products && cat ? products.filter((p) => p.category === cat.id) : [];
@@ -28,7 +29,7 @@ export default function CollectionPage({ params }) {
       </div>
     );
   }
-  if (error) return <p className="text-center text-accent-red py-16">مشكلة تحميل: {error}</p>;
+  if (error) return <RetryError onRetry={reload} />;
 
   const sortBtn = "px-3 py-1.5 rounded-full text-xs font-bold border transition-colors";
   const list = (() => {

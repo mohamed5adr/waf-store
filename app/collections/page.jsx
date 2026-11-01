@@ -5,13 +5,14 @@ import ProductCard from "@/components/ProductCard";
 import Carousel from "@/components/Carousel";
 import { useProducts, useCategories } from "@/lib/hooks";
 import { egp } from "@/lib/data";
+import RetryError from "@/components/RetryError";
 
 export default function CollectionsIndexPage() {
-  const { products, error } = useProducts();
+  const { products, error, reload } = useProducts();
   const { categories } = useCategories();
 
   if (!products || !categories) return <p className="text-center text-gray-400 py-24">⏳ بنجيب المتجر...</p>;
-  if (error) return <p className="text-center text-accent-red py-16">مشكلة تحميل: {error}</p>;
+  if (error) return <RetryError onRetry={reload} />;
   return (
     <div className="space-y-8">
       <h1 className="font-extrabold text-2xl">تصفح الأقسام</h1>

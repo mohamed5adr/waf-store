@@ -23,7 +23,7 @@ export default function Error({ error, reset }) {
 
       <div className="flex gap-3 justify-center flex-wrap">
         <button onClick={reset} className="bg-primary text-white font-bold px-6 py-3 rounded-xl hover:bg-primary-dark">
-          🔄 حاول تاني
+          🔄 حاول مرة أخرى
         </button>
         <a href="/" className="bg-white border border-gray-200 font-bold px-6 py-3 rounded-xl hover:border-primary hover:text-primary">
           🏠 الرئيسية

@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 
 // صفحة 404 — الرابط اللي الزائر بيدور عليه مش موجود
@@ -21,7 +23,13 @@ export default function NotFound() {
       </div>
 
       <div className="flex gap-3 justify-center flex-wrap">
-        <Link href="/" className="bg-primary text-white font-bold px-6 py-3 rounded-xl hover:bg-primary-dark">
+        <button
+          onClick={() => window.location.reload()}
+          className="bg-primary text-white font-bold px-6 py-3 rounded-xl hover:bg-primary-dark"
+        >
+          🔄 حاول مرة أخرى
+        </button>
+        <Link href="/" className="bg-white border border-gray-200 font-bold px-6 py-3 rounded-xl hover:border-primary hover:text-primary">
           🏠 الرئيسية
         </Link>
         <Link href="/collections" className="bg-white border border-gray-200 font-bold px-6 py-3 rounded-xl hover:border-primary hover:text-primary">

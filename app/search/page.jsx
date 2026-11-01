@@ -5,16 +5,17 @@ import ProductCard from "@/components/ProductCard";
 import { useProducts } from "@/lib/hooks";
 import { Suspense, useState } from "react";
 import { useSearchParams } from "next/navigation";
+import RetryError from "@/components/RetryError";
 
 function Results() {
-  const { products, error } = useProducts();
+  const { products, error, reload } = useProducts();
   const q = (useSearchParams().get("q") || "").trim();
   const list = products && q
     ? products.filter((p) => p.name.includes(q) || p.name.toLowerCase().includes(q.toLowerCase()))
     : [];
 
   if (!products) return <p className="text-center text-gray-400 py-24">⏳ بنجيب المنتجات...</p>;
-  if (error) return <p className="text-center text-accent-red py-16">مشكلة تحميل: {error}</p>;
+  if (error) return <RetryError onRetry={reload} />;
 
   return (
     <div>
